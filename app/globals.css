@@ -251,7 +251,7 @@ body {
                     radial-gradient(ellipse at 70% 10%, rgba(16,185,129,0.04) 0%, transparent 55%);
 }
 
-/* ─── MODAL OVERLAY ─── */
+/* ─── MODAL OVERLAY ─── 
 .modal-overlay {
   position: fixed; inset: 0; z-index: 50;
   background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
@@ -261,6 +261,38 @@ body {
   background: var(--bg-card); border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg); box-shadow: 0 24px 64px rgba(0,0,0,0.4);
   width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto;
+  animation: fadeIn 0.2s ease;
+}*/
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+
+  display: flex;
+  justify-content: center;
+
+  /* 👇 clé du fix */
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: 40px 20px;
+}
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+
+  width: 100%;
+  max-width: 520px;
+
+  /* 👇 important */
+  max-height: none;
+
   animation: fadeIn 0.2s ease;
 }
 
