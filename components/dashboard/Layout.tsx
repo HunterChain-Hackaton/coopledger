@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation';
 import { ReactNode, useState } from 'react';
 import {
   LayoutDashboard, ArrowRightLeft, Vote, Users, FileText,
-  LogOut, Settings, Menu, X, ChevronDown, Globe
+  LogOut, Settings, Menu, X, ChevronDown, Globe,
+  MonitorCheck
 } from 'lucide-react';
 import { RiLeafLine, RiSunLine } from 'react-icons/ri';
 import { useAuth } from '@/hooks/useAuth';
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/votes', label: 'Votes', icon: Vote, roles: ['PRESIDENT','TREASURER','MEMBER','AUDITOR','MINISTRY','ADMIN'] as Role[] },
   { href: '/dashboard/members', label: 'Membres', icon: Users, roles: ['PRESIDENT','ADMIN'] as Role[] },
   { href: '/dashboard/reports', label: 'Rapports', icon: FileText, roles: ['PRESIDENT','TREASURER','AUDITOR','MINISTRY','ADMIN'] as Role[] },
+  { href: '/ministry', label : 'Coordination', icon: MonitorCheck, roles:['MINISTRY','ADMIN'] as Role[]}
 ];
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
