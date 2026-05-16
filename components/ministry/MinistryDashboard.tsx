@@ -6,7 +6,7 @@ import { ministryApi } from '@/lib/api';
 import { CoopApplication, PublicCooperative } from '@/types';
 import { formatDate, formatFCFA } from '@/lib/utils';
 import { Modal, showToast } from '@/components/ui';
-import { RiCheckLine, RiCloseLine, RiPhoneLine, RiBuildingLine } from 'react-icons/ri';
+import { RiCheckLine, RiCloseLine, RiPhoneLine, RiBuildingLine, RiAddLine } from 'react-icons/ri';
 import { useRouter } from 'next/navigation';
 
 export default function MinistryDashboard() {
@@ -23,6 +23,8 @@ export default function MinistryDashboard() {
   const [rejectModal,  setRejectModal]= useState<{ id: number; name: string } | null>(null);
   const [rejectReason, setRejectReason]=useState('');
   const [acting,       setActing]     = useState(false);
+  const [createModal, setCreateModal] = useState(false);
+  const [createForm, setCreateForm]   = useState({ name:'', region:'', village:'', phone_contact:'', president_name:'', president_phone:'' });
 
   useEffect(() => {
     if (!authLoading && user?.role !== 'MINISTRY' && user?.role !== 'ADMIN') {
@@ -185,9 +187,13 @@ export default function MinistryDashboard() {
         {/* Coopératives */}
         {tab === 'cooperatives' && (
           <div className="card">
-            <div style={{ padding: '14px 24px', borderBottom: '1px solid var(--border)' }}>
-              <h2 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>Toutes les coopératives</h2>
-            </div>
+            <div style={{ padding: '14px 24px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <h2 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>Toutes les coopératives</h2>
+            <button className="btn btn-sm" onClick={() => setCreateModal(true)}
+              style={{ background: accent, color: 'white', border: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <RiAddLine size={14} /> Créer une coopérative
+            </button>
+          </div>
             <div style={{ overflowX: 'auto' }}>
               <table className="data-table">
                 <thead>
@@ -211,6 +217,44 @@ export default function MinistryDashboard() {
           </div>
         )}
       </main>
+
+      {/*Modal creation*/}
+      <Modal open={createModal} onClose={() => setCreateModal(false)} title="Créer une coopérative">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {[
+            { key: 'name',            label: 'Nom de la coopérative *' },
+            { key: 'region',          label: 'Région *' },
+            { key: 'village',         label: 'Village / Adresse *' },
+            { key: 'phone_contact',   label: 'Téléphone de la coopérative *' },
+            { key: 'president_name',  label: 'Nom du président *' },
+            { key: 'president_phone', label: 'Téléphone du président *' },
+          ].map(f => (
+            <div key={f.key}>
+              <label className="input-label">{f.label}</label>
+              <input className="input" value={(createForm as any)[f.key]}
+                onChange={e => setCreateForm(prev => ({ ...prev, [f.key]: e.target.value }))} />
+            </div>
+          ))}
+          <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+            <button className="btn btn-secondary" onClick={() => setCreateModal(false)} style={{ flex: 1 }}>Annuler</button>
+            <button className="btn" disabled={acting} style={{ flex: 1, background: accent, color: 'white', border: 'none' }}
+              onClick={async () => {
+                setActing(true);
+                try {
+                  await ministryApi.createCooperative(createForm);
+                  showToast('Coopérative créée avec succès.', 'success');
+                  setCreateModal(false);
+                  setCreateForm({ name:'', region:'', village:'', phone_contact:'', president_name:'', president_phone:'' });
+                  refresh();
+                } catch (e: any) {
+                  showToast(e?.response?.data?.error || 'Erreur lors de la création.', 'error');
+                } finally { setActing(false); }
+              }}>
+              {acting ? <span className="spinner" style={{ width: 16, height: 16 }} /> : 'Créer'}
+            </button>
+          </div>
+        </div>
+      </Modal>
 
       {/* Modal refus */}
       <Modal open={!!rejectModal} onClose={() => setRejectModal(null)} title={`Refuser : ${rejectModal?.name}`}>

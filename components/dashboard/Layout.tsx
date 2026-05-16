@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { ReactNode, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { ReactNode, useEffect, useState } from 'react';
 import {
   LayoutDashboard, ArrowRightLeft, Vote, Users, FileText,
   LogOut, Settings, Menu, X, ChevronDown, Globe,
@@ -34,6 +34,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const visibleItems = NAV_ITEMS.filter(item =>
     user?.role ? item.roles.includes(user.role) : false
   );
+
+  const router = useRouter(); // ajouter import { useRouter } from 'next/navigation'
+
+  useEffect(() => {
+    if (user && (user.role === 'MINISTRY' || user.role === 'ADMIN') && pathname === '/dashboard') {
+      router.replace('/ministry');
+    }
+  }, [user, pathname]);
 
   const isDry = theme === 'dry';
 

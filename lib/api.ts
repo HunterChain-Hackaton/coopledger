@@ -158,4 +158,8 @@ export const ministryApi = {
   // Liste toutes les coopératives (surveillance)
   listAllCooperatives: () =>
     api.get('/ministry/cooperatives/'),
+
+  createCooperative: (data: Record<string, unknown>) =>
+  api.post('/ministry/cooperatives/create/', data),
 };
+
