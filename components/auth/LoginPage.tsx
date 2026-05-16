@@ -114,8 +114,9 @@ export default function LoginPage() {
       <div className="hidden lg:flex flex-col justify-between p-12" style={{ width: '42%', background: 'var(--bg-secondary)', borderRight: '1px solid var(--border)' }}>
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: accentColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {isDry ? <RiSunLine size={22} color="white" /> : <RiLeafLine size={22} color="white" />}
+          <div style={{ width: 44, height: 44, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {/*isDry ? <RiSunLine size={22} color="white" /> : <RiLeafLine size={22} color="white" />*/}
+            <img src="logo.jpg" alt="Logo" />
           </div>
           <div>
             <div style={{ fontWeight: 700, fontSize: 20, color: 'var(--text-primary)', fontFamily: 'Sora, sans-serif' }}>CoopLedger</div>
