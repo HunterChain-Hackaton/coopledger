@@ -1,2 +1,2 @@
-import PublicDashboard from '@/components/dashboard/PublicDashboard';
-export default function HomePage() { return <PublicDashboard />; }
+import LandingPage from '@/components/public/LandingPage';
+export default function HomePage() { return <LandingPage />; }

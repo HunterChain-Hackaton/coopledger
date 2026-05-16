@@ -274,7 +274,7 @@ body {
 
   display: flex;
   justify-content: center;
-
+        
   /* 👇 clé du fix */
   align-items: flex-start;
   overflow-y: auto;

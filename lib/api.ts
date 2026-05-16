@@ -112,3 +112,50 @@ export const reportApi = {
   get: (id: number) => api.get(`/reports/${id}/`),
   generate: () => api.post('/reports/generate/'),
 };
+
+
+// ── PUBLIC endpoints (sans auth) ──────────────────────────────────────────────
+export const publicApi = {
+  // Liste toutes les coopératives actives
+  listCooperatives: () =>
+    api.get('/public/cooperatives/'),
+
+  // Données publiques d'une coopérative
+  getCooperative: (id: number) =>
+    api.get(`/public/cooperatives/${id}/`),
+
+  // Transactions publiques d'une coopérative
+  getTransactions: (coopId: number, params?: Record<string, string | number>) =>
+    api.get(`/public/cooperatives/${coopId}/transactions/`, { params }),
+
+  // Votes publics d'une coopérative
+  getVotes: (coopId: number) =>
+    api.get(`/public/cooperatives/${coopId}/votes/`),
+
+  // Résumé financier public
+  getSummary: (coopId: number) =>
+    api.get(`/public/cooperatives/${coopId}/summary/`),
+
+  // Soumettre une demande d'inscription coopérative
+  applyCooperative: (data: Record<string, unknown>) =>
+    api.post('/public/cooperatives/apply/', data),
+};
+
+// ── MINISTRY endpoints ────────────────────────────────────────────────────────
+export const ministryApi = {
+  // Liste toutes les demandes d'inscription
+  listApplications: () =>
+    api.get('/ministry/applications/'),
+
+  // Approuver une demande
+  approveApplication: (id: number) =>
+    api.post(`/ministry/applications/${id}/approve/`),
+
+  // Refuser une demande
+  rejectApplication: (id: number, reason: string) =>
+    api.post(`/ministry/applications/${id}/reject/`, { reason }),
+
+  // Liste toutes les coopératives (surveillance)
+  listAllCooperatives: () =>
+    api.get('/ministry/cooperatives/'),
+};

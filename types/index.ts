@@ -123,3 +123,37 @@ export interface Me {
   cooperative_name?: string;
   is_active: boolean;
 }
+
+
+
+// ── Types publics ─────────────────────────────────────────────────────────────
+export interface PublicCooperative {
+  id:               number;
+  name:             string;
+  code:             string;
+  region:           string;
+  village:          string;
+  balance_fcfa:     number;
+  member_count:     number;
+  transaction_count:number;
+  vote_count:       number;
+  is_active:        boolean;
+  created_at:       string;
+  polygon_coop_id:  number;
+}
+
+export interface CoopApplication {
+  id:              number;
+  name:            string;
+  president_name:  string;
+  president_email: string;
+  phone:           string;
+  email:           string;
+  address:         string;
+  region:          string;
+  member_count:    number;
+  fiscal_number:   string;
+  status:          'PENDING' | 'APPROVED' | 'REJECTED';
+  rejection_reason?:string;
+  submitted_at:    string;
+}
