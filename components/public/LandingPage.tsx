@@ -186,7 +186,7 @@ export default function LandingPage() {
               Consultez le solde de votre coopérative, votez sur les résolutions et restez informé — même hors connexion. Disponible sur Android et iOS.
             </p>
             <div style={{ display: 'flex', gap: 12 }}>
-              <a href="/coopledger.api" download className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
+              <a href="/coopledger.apk" download className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
                 Android (APK) <RiArrowRightLine size={13} />
               </a>
               <a href="#" className="btn btn-secondary btn-sm" style={{ textDecoration: 'none' }}>
