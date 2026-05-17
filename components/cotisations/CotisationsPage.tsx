@@ -302,7 +302,7 @@ function CreateCampaignModal({
 
   useEffect(() => {
     if (form.target === 'MANUAL') {
-      import('@/lib/api').then(({ default: api }) =>
+      import('@/lib/api').then(({ api }) =>
         api.get('/cooperatives/members/').then(r => setMembers(r.data))
       );
     }
