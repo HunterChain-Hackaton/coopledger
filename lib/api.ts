@@ -163,3 +163,24 @@ export const ministryApi = {
   api.post('/ministry/cooperatives/create/', data),
 };
 
+
+
+export const cotisationApi = {
+  listCampaigns: () =>
+    api.get('/cotisations/'),
+
+  getCampaign: (id: number) =>
+    api.get(`/cotisations/${id}/`),
+
+  createCampaign: (data: Record<string, unknown>) =>
+    api.post('/cotisations/', data),
+
+  closeCampaign: (id: number) =>
+    api.patch(`/cotisations/${id}/`, { status: 'CLOSED' }),
+
+  getPayments: (campaignId: number) =>
+    api.get(`/cotisations/${campaignId}/payments/`),
+
+  initiatePayment: (campaignId: number, data: { phone_number: string; operator: string }) =>
+    api.post(`/cotisations/${campaignId}/initiate-payment/`, data),
+};

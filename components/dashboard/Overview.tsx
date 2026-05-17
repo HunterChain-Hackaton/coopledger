@@ -6,11 +6,11 @@ import {
   PieChart, Pie, Cell, Legend, BarChart, Bar
 } from 'recharts';
 import { TrendingUp, TrendingDown, Clock, CheckCircle2, AlertCircle, Vote, Users, ArrowUpRight } from 'lucide-react';
-import { RiShieldCheckLine } from 'react-icons/ri';
+import { RiMoneyDollarCircleLine, RiShieldCheckLine } from 'react-icons/ri';
 import Link from 'next/link';
-import { transactionApi, voteApi } from '@/lib/api';
+import { cotisationApi, transactionApi, voteApi } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
-import { Transaction, CooperativeVote, TransactionSummary } from '@/types';
+import { Transaction, CooperativeVote, TransactionSummary, CotisationCampaign } from '@/types';
 import { StatCard, BlockchainStatus, HashDisplay } from '@/components/ui';
 import { formatFCFA, formatDate, timeAgo, TX_TYPE_LABELS, TX_TYPE_COLORS, VOTE_STATUS_LABELS } from '@/lib/utils';
 import { useTheme } from '@/hooks/useTheme';
@@ -70,12 +70,15 @@ export default function DashboardPage() {
   const [transactions, setTransactions] = useState<Transaction[]>(DEMO_TRANSACTIONS);
   const [votes, setVotes] = useState<CooperativeVote[]>(DEMO_VOTES);
   const [loading, setLoading] = useState(false);
+  const [cotisationsRes, setCotisationRes] = useState<CotisationCampaign[]>([]);
+  const [openCampaigns, setOpenCampaigns] = useState<CotisationCampaign[]>([]);
 
   const accentColor = theme === 'dry' ? '#f07a2a' : '#059669';
   const isDry = theme === 'dry';
 
   useEffect(() => {
     async function load() {
+      
       try {
         setLoading(true);
         const [txRes, voteRes, sumRes] = await Promise.allSettled([
@@ -83,6 +86,12 @@ export default function DashboardPage() {
           voteApi.list({ limit: 4 }),
           transactionApi.summary(),
         ]);
+        const cotisationsResi = await cotisationApi.listCampaigns();
+        setCotisationRes(cotisationsResi.data as CotisationCampaign[]);
+        
+        const _openCampaigns  = (cotisationsResi.data as CotisationCampaign[]).filter(c => c.status === 'OPEN');
+        setOpenCampaigns(_openCampaigns);
+        //060307
         if (txRes.status === 'fulfilled') setTransactions(txRes.value.data.results || txRes.value.data);
         if (voteRes.status === 'fulfilled') setVotes(voteRes.value.data.results || voteRes.value.data);
         if (sumRes.status === 'fulfilled') setSummary(sumRes.value.data);
@@ -96,8 +105,8 @@ export default function DashboardPage() {
   }, []);
 
   const monthlyData = summary?.monthly || DEMO_MONTHLY;
-  const balance = summary?.balance ?? 1285000;
-  const totalIn = summary?.total_in ?? 620000;
+  const balance = summary?.balance ?? -165000;
+  const totalIn = summary?.total_in ?? 145000;
   const totalOut = summary?.total_out ?? 310000;
 
   const pieData = DEMO_PIE; // Would come from summary.by_type
@@ -153,8 +162,14 @@ export default function DashboardPage() {
           deltaUp
           icon={<Vote size={18} />}
         />
+        <StatCard 
+          label='Cotisations en cours'
+          value={String(openCampaigns.length)}
+          delta={String(cotisationsRes.length)}
+          deltaUp
+          icon={<RiMoneyDollarCircleLine size={18} />}
+        />
       </div>
-
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* Balance evolution — spans 2 cols */}
@@ -303,6 +318,32 @@ export default function DashboardPage() {
             })}
           </div>
         </div>
+
+        {openCampaigns.length > 0 && (
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <h2 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>Cotisations en cours</h2>
+              <Link href="/dashboard/cotisations" style={{ fontSize: 13, color: 'var(--accent)', textDecoration: 'none' }}>Voir tout</Link>
+            </div>
+            {openCampaigns.slice(0, 2).map(c => (
+              <div key={c.id} className="card" style={{ padding: '14px 18px', marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>{c.title}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{c.paid_count}/{c.target_count} membres · {formatFCFA(c.amount_fcfa)}</div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--accent)' }}>{c.progress_pct}%</div>
+                  {c.user_payment?.status !== 'CONFIRMED' && (
+                    <Link href="/dashboard/cotisations" className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
+                      Cotiser
+                    </Link>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import {
   LogOut, Settings, Menu, X, ChevronDown, Globe,
   MonitorCheck
 } from 'lucide-react';
-import { RiLeafLine, RiSunLine } from 'react-icons/ri';
+import { RiLeafLine, RiMoneyDollarCircleLine, RiSunLine } from 'react-icons/ri';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { Avatar, ToastContainer } from '@/components/ui';
@@ -21,7 +21,8 @@ const NAV_ITEMS = [
   { href: '/dashboard/votes', label: 'Votes', icon: Vote, roles: ['PRESIDENT','TREASURER','MEMBER','AUDITOR','MINISTRY','ADMIN'] as Role[] },
   { href: '/dashboard/members', label: 'Membres', icon: Users, roles: ['PRESIDENT','ADMIN'] as Role[] },
   { href: '/dashboard/reports', label: 'Rapports', icon: FileText, roles: ['PRESIDENT','TREASURER','AUDITOR','MINISTRY','ADMIN'] as Role[] },
-  { href: '/ministry', label : 'Coordination', icon: MonitorCheck, roles:['MINISTRY','ADMIN'] as Role[]}
+  { href: '/dashboard/cotisations', label: 'Cotisations', icon: RiMoneyDollarCircleLine,roles:['PRESIDENT','TREASURER','MEMBER'] },
+  { href: '/ministry', label : 'Coordination', icon: MonitorCheck, roles:['MINISTRY','ADMIN'] as Role[]},
 ];
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {

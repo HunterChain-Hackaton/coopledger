@@ -157,3 +157,37 @@ export interface CoopApplication {
   rejection_reason?:string;
   submitted_at:    string;
 }
+
+
+export interface CotisationCampaign {
+  id:                    number;
+  title:                 string;
+  description:           string;
+  amount_fcfa:           number;
+  target:                'ALL' | 'FARMERS' | 'MANUAL';
+  status:                'OPEN' | 'CLOSED';
+  deadline?:             string;
+  created_by_name:       string;
+  total_collected_fcfa:  number;
+  paid_count:            number;
+  target_count:          number;
+  progress_pct:          number;
+  user_payment?:         { status: string; amount_fcfa: number; operator: string; confirmed_at?: string } | null;
+  created_at:            string;
+  closed_at?:            string;
+}
+
+export interface CotisationPayment {
+  id:                    number;
+  member_name:           string;
+  amount_fcfa:           number;
+  phone_number:          string;
+  operator:              string;
+  status:                string;
+  fedapay_transaction_id?: string;
+  blockchain_status:     string;
+  polygon_tx_hash?:      string;
+  polygonscan_url?:      string;
+  initiated_at:          string;
+  confirmed_at?:         string;
+}
