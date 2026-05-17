@@ -1,3 +1,5 @@
+import { statusBlockChain } from "@/components/ui";
+
 export type Role = 'PRESIDENT' | 'TREASURER' | 'MEMBER' | 'AUDITOR' | 'MINISTRY' | 'ADMIN';
 
 export interface Cooperative {

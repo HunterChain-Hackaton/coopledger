@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { cotisationApi } from '@/lib/api';
 import { CotisationCampaign, CotisationPayment } from '@/types';
 import { formatFCFA, formatDate } from '@/lib/utils';
-import { BlockchainStatus } from '@/components/ui';
+import { BlockchainStatus, statusBlockChain } from '@/components/ui';
 import {
   RiAddLine, RiMoneyDollarCircleLine, RiCheckLine,
   RiCloseLine, RiSmartphoneLine, RiExternalLinkLine,
@@ -594,7 +594,7 @@ function CampaignDetailModal({
                         {{ CONFIRMED: 'Payé', FAILED: 'Échoué', WAITING_CONFIRMATION: 'En attente', PENDING: 'Non initié' }[p.status] ?? p.status}
                       </span>
                     </td>
-                    <td><BlockchainStatus status={p.blockchain_status} /></td>
+                    <td><BlockchainStatus status={p.blockchain_status=="FAILED" ?"FAILED" :( p.blockchain_status=="CONFIRMED"? "CONFIRMED" : "PENDING")} /></td>
                     <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                       {p.confirmed_at ? formatDate(p.confirmed_at) : p.initiated_at ? formatDate(p.initiated_at) : '—'}
                     </td>

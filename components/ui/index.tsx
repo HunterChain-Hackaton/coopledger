@@ -173,8 +173,12 @@ export function HashDisplay({ hash, url }: { hash?: string; url?: string }) {
   return content;
 }
 
+export interface statusBlockChain {
+  status: 'PENDING' | 'CONFIRMED' | 'FAILED'
+}
+
 // ─── BLOCKCHAIN STATUS ───
-export function BlockchainStatus({ status }: { status: 'PENDING' | 'CONFIRMED' | 'FAILED' }) {
+export function BlockchainStatus({ status }: statusBlockChain) {
   if (status === 'CONFIRMED') return (
     <div className="flex items-center gap-2">
       <span className="chain-dot chain-confirmed" />
