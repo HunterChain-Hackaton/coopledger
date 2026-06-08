@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/hooks/useTheme';
 import {
@@ -220,153 +220,33 @@ const FAQ_CATEGORIES = [
   },
 ];
 
-function useInView(ref: React.RefObject<HTMLElement>, threshold = 0.1) {
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    if (!ref.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setInView(true); },
-      { threshold }
-    );
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [ref, threshold]);
-  return inView;
-}
-
-function AccordionItem({
-  q, a, accent, isOpen, onToggle, index,
-}: {
-  q: string; a: string; accent: string; isOpen: boolean; onToggle: () => void; index: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref as React.RefObject<HTMLElement>, 0.05);
-
+function AccordionItem({ q, a, accent, isOpen, onToggle }: { q: string; a: string; accent: string; isOpen: boolean; onToggle: () => void }) {
   return (
-    <div
-      ref={ref}
-      style={{
-        borderBottom: '1px solid var(--border-subtle)',
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(16px)',
-        transition: `opacity 0.45s ease ${index * 60}ms, transform 0.45s ease ${index * 60}ms`,
-      }}
-    >
+    <div style={{ borderBottom: '1px solid var(--border-subtle)' }}>
       <button
         onClick={onToggle}
         style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          gap: 12,
-          padding: '18px 0',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
+          width: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+          gap: 16, padding: '18px 0', background: 'none', border: 'none', cursor: 'pointer',
           textAlign: 'left',
         }}
       >
-        <span style={{
-          fontSize: 15,
-          fontWeight: 500,
-          color: isOpen ? accent : 'var(--text-primary)',
-          lineHeight: 1.5,
-          flex: 1,
-          minWidth: 0,
-          transition: 'color 0.2s',
-          wordBreak: 'break-word',
-          overflowWrap: 'break-word',
-        }}>
+        <span style={{ fontSize: 15, fontWeight: 500, color: isOpen ? accent : 'var(--text-primary)', lineHeight: 1.5, flex: 1, transition: 'color 0.2s' }}>
           {q}
         </span>
-        <div style={{
-          width: 28,
-          height: 28,
-          minWidth: 28,
-          borderRadius: 8,
-          background: isOpen ? `${accent}18` : 'var(--bg-card-hover)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-          transition: 'background 0.2s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
-          transform: isOpen ? 'rotate(0deg) scale(1.1)' : 'rotate(0deg) scale(1)',
-          marginTop: 1,
-        }}>
+        <div style={{ width: 28, height: 28, borderRadius: 8, background: isOpen ? `${accent}18` : 'var(--bg-card-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.2s', marginTop: 1 }}>
           {isOpen
             ? <RiSubtractLine size={16} style={{ color: accent }} />
             : <RiAddLine size={16} style={{ color: 'var(--text-muted)' }} />
           }
         </div>
       </button>
-      <div style={{
-        display: 'grid',
-        gridTemplateRows: isOpen ? '1fr' : '0fr',
-        transition: 'grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
-        overflow: 'hidden',
-      }}>
-        <div style={{ overflow: 'hidden' }}>
-          <div style={{
-            paddingBottom: 20,
-            paddingRight: 40,
-            opacity: isOpen ? 1 : 0,
-            transform: isOpen ? 'translateY(0)' : 'translateY(-8px)',
-            transition: 'opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s',
-          }}>
-            <p style={{
-              fontSize: 14,
-              color: 'var(--text-secondary)',
-              lineHeight: 1.75,
-              margin: 0,
-              wordBreak: 'break-word',
-              overflowWrap: 'break-word',
-            }}>{a}</p>
-          </div>
+      {isOpen && (
+        <div style={{ paddingBottom: 20, paddingRight: 44, animation: 'fadeIn 0.2s ease' }}>
+          <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.75 }}>{a}</p>
         </div>
-      </div>
+      )}
     </div>
-  );
-}
-
-function CategoryButton({ cat, isActive, accent, onClick }: { cat: { id: string; label: string; questions: unknown[] }; isActive: boolean; accent: string; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '10px 14px',
-        borderRadius: 8,
-        border: 'none',
-        cursor: 'pointer',
-        background: isActive ? `${accent}12` : 'none',
-        color: isActive ? accent : 'var(--text-secondary)',
-        fontFamily: 'Sora, sans-serif',
-        fontSize: 13,
-        fontWeight: isActive ? 600 : 400,
-        textAlign: 'left',
-        transition: 'all 0.2s cubic-bezier(0.4,0,0.2,1)',
-        borderLeft: `2px solid ${isActive ? accent : 'transparent'}`,
-        transform: isActive ? 'translateX(2px)' : 'translateX(0)',
-        width: '100%',
-      }}
-    >
-      <span>{cat.label}</span>
-      <span style={{
-        fontSize: 11,
-        background: isActive ? `${accent}18` : 'var(--bg-card-hover)',
-        color: isActive ? accent : 'var(--text-muted)',
-        borderRadius: 10,
-        padding: '1px 7px',
-        fontWeight: 600,
-        transition: 'all 0.2s',
-        flexShrink: 0,
-      }}>
-        {(cat.questions as unknown[]).length}
-      </span>
-    </button>
   );
 }
 
@@ -379,23 +259,6 @@ export default function FaqPage() {
   const [activeCategory, setActiveCategory] = useState('general');
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
   const [search, setSearch] = useState('');
-  const [heroVisible, setHeroVisible] = useState(false);
-  const heroRef = useRef<HTMLDivElement>(null);
-  const catScrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setHeroVisible(true), 80);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Scroll active category chip into view on mobile
-  useEffect(() => {
-    if (!catScrollRef.current) return;
-    const active = catScrollRef.current.querySelector(`[data-active="true"]`) as HTMLElement;
-    if (active) {
-      active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
-  }, [activeCategory]);
 
   const toggleItem = (key: string) => setOpenItems(prev => ({ ...prev, [key]: !prev[key] }));
 
@@ -414,168 +277,55 @@ export default function FaqPage() {
     : (FAQ_CATEGORIES.find(c => c.id === activeCategory)?.questions ?? []).map(q => ({ ...q, catId: activeCategory }));
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
       <style>{`
-        @keyframes fadeSlideUp {
-          from { opacity: 0; transform: translateY(24px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
-        @keyframes shimmer {
-          0%   { background-position: -200% center; }
-          100% { background-position:  200% center; }
-        }
-        @keyframes pulse-ring {
-          0%   { transform: scale(0.95); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-color) 40%, transparent); }
-          70%  { transform: scale(1);    box-shadow: 0 0 0 10px transparent; }
-          100% { transform: scale(0.95); box-shadow: 0 0 0 0 transparent; }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50%       { transform: translateY(-6px); }
-        }
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-        @keyframes slideInRight {
-          from { opacity: 0; transform: translateX(20px); }
-          to   { opacity: 1; transform: translateX(0); }
-        }
-
-        /* ── Hero stagger ── */
-        .hero-badge    { animation: fadeSlideUp 0.5s ease 0.1s both; }
-        .hero-title    { animation: fadeSlideUp 0.6s ease 0.2s both; }
-        .hero-subtitle { animation: fadeSlideUp 0.6s ease 0.32s both; }
-        .hero-search   { animation: fadeSlideUp 0.6s ease 0.44s both; }
-
-        /* ── Search box glow on focus ── */
-        .search-box:focus-within {
-          box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 25%, transparent);
-        }
-        .search-box input:focus { outline: none; }
-
-        /* ── Sidebar nav ── */
         .faq-nav-desktop { display: flex; align-items: center; gap: 8px; }
-        .faq-hamburger   { display: none; }
-
-        /* ── Two-column layout ── */
-        .faq-layout {
-          display: grid;
-          grid-template-columns: 220px 1fr;
-          gap: 32px;
-          align-items: flex-start;
-        }
+        .faq-hamburger { display: none; }
+        .faq-layout { display: grid; grid-template-columns: 220px 1fr; gap: 32px; align-items: flex-start; }
         .faq-sidebar { position: sticky; top: 80px; }
-
-        /* ── Category pill scroll (mobile) ── */
-        .faq-cat-scroll {
-          display: none;
-          overflow-x: auto;
-          gap: 8px;
-          padding-bottom: 6px;
-          flex-wrap: nowrap;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-          /* prevent horizontal bleed */
-          max-width: 100%;
-        }
-        .faq-cat-scroll::-webkit-scrollbar { display: none; }
-
-        /* ── Accordion card: prevent overflow ── */
-        .faq-accordion-card {
-          padding: 0 20px;
-          border-radius: 12px;
-          overflow: hidden; /* clip any child overflow */
-          width: 100%;
-          box-sizing: border-box;
-        }
-
-        /* ── Hero title ── */
         .faq-hero-title { font-size: 42px; }
 
-        /* ── Hover lift on accordion items ── */
-        .accordion-row:hover { background: color-mix(in srgb, var(--accent-color) 4%, transparent); }
-
-        /* ───────────────────────────────────── */
-        /* TABLET / MOBILE breakpoints           */
-        /* ───────────────────────────────────── */
         @media (max-width: 820px) {
-          .faq-layout {
-            display: flex !important;
-            flex-direction: column;
-            gap: 0;
-          }
-          .faq-sidebar     { display: none !important; }
-          .faq-cat-scroll  { display: flex !important; margin-bottom: 24px; }
+          .faq-layout { grid-template-columns: 1fr; }
+          .faq-sidebar { position: static; }
         }
 
         @media (max-width: 640px) {
           .faq-nav-desktop { display: none; }
-          .faq-hamburger   { display: flex; }
-          .faq-hero-title  { font-size: 26px; line-height: 1.25; }
+          .faq-hamburger { display: flex; }
+          .faq-hero-title { font-size: 26px; line-height: 1.2; }
           .faq-hero-section { padding: 40px 0 32px !important; }
-          .faq-content-pad  { padding: 0 14px !important; }
-          .faq-accordion-card { padding: 0 14px; }
+          .faq-content-pad { padding: 0 16px !important; }
+          .faq-cat-scroll { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 4px; flex-wrap: nowrap !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+          .faq-cat-scroll::-webkit-scrollbar { display: none; }
+          .faq-cat-btn { white-space: nowrap; flex-shrink: 0; }
         }
 
-        /* ── Mobile drawer ── */
         .faq-mobile-drawer {
           display: none;
           position: fixed; inset: 0; z-index: 50;
-          background: var(--bg-secondary);
-          flex-direction: column;
+          background: var(--bg-secondary); flex-direction: column;
         }
         .faq-mobile-drawer.open { display: flex; }
-
-        /* ── Shimmer on accent text ── */
-        .accent-shimmer {
-          background: linear-gradient(
-            90deg,
-            var(--accent-color) 0%,
-            color-mix(in srgb, var(--accent-color) 60%, white) 40%,
-            var(--accent-color) 80%
-          );
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: shimmer 3s linear infinite;
-        }
       `}</style>
 
-      {/* CSS var bridge for color-mix */}
-      <style>{`:root { --accent-color: ${accent}; }`}</style>
-
-      {/* ── Mobile drawer ── */}
+      {/* Mobile drawer */}
       {mobileMenuOpen && (
-        <div className="faq-mobile-drawer open" style={{ animation: 'fadeIn 0.2s ease' }}>
+        <div className="faq-mobile-drawer open">
           <div style={{ height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', borderBottom: '1px solid var(--border)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 30, height: 30, borderRadius: 8, background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'float 3s ease-in-out infinite' }}>
+              <div style={{ width: 30, height: 30, borderRadius: 8, background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {isDry ? <RiSunLine size={16} color="white" /> : <RiLeafLine size={16} color="white" />}
               </div>
               <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>CoopLedger</span>
             </div>
-            <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', padding: 8, transition: 'transform 0.2s', transform: 'rotate(0deg)' }}
-              onMouseEnter={e => (e.currentTarget.style.transform = 'rotate(90deg)')}
-              onMouseLeave={e => (e.currentTarget.style.transform = 'rotate(0deg)')}
-            >
+            <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', padding: 8 }}>
               <RiCloseLine size={22} />
             </button>
           </div>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px 20px', gap: 8 }}>
-            {([['/', 'Accueil'], ['/cooperatives', 'Coopératives'], ['/about', 'À propos']] as [string, string][]).map(([href, label], i) => (
-              <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)} style={{
-                display: 'block', padding: '14px 16px', borderRadius: 10,
-                color: 'var(--text-primary)', textDecoration: 'none', fontSize: 15, fontWeight: 500,
-                border: '1px solid var(--border-subtle)',
-                animation: `fadeSlideUp 0.35s ease ${i * 60}ms both`,
-                transition: 'background 0.15s',
-              }}>
+            {[['/', 'Accueil'], ['/cooperatives', 'Coopératives'], ['/about', 'À propos']].map(([href, label]) => (
+              <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)} style={{ display: 'block', padding: '14px 16px', borderRadius: 10, color: 'var(--text-primary)', textDecoration: 'none', fontSize: 15, fontWeight: 500, border: '1px solid var(--border-subtle)' }}>
                 {label}
               </Link>
             ))}
@@ -591,53 +341,31 @@ export default function FaqPage() {
         </div>
       )}
 
-      {/* ── Navbar ── */}
-      <header style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-secondary)', position: 'sticky', top: 0, zIndex: 30, backdropFilter: 'blur(10px)' }}>
+      {/* Navbar */}
+      <header style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-secondary)', position: 'sticky', top: 0, zIndex: 30 }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 20px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', color: 'var(--text-muted)', fontSize: 13, transition: 'color 0.15s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = accent)}
-              onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
-            >
+            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', color: 'var(--text-muted)', fontSize: 13 }}>
               <RiArrowLeftLine size={14} /> Accueil
             </Link>
             <span style={{ color: 'var(--border-strong)' }}>·</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 28, height: 28, borderRadius: 7, background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.3s', cursor: 'default' }}
-                onMouseEnter={e => (e.currentTarget.style.transform = 'rotate(15deg) scale(1.1)')}
-                onMouseLeave={e => (e.currentTarget.style.transform = 'rotate(0deg) scale(1)')}
-              >
+              <div style={{ width: 28, height: 28, borderRadius: 7, background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {isDry ? <RiSunLine size={14} color="white" /> : <RiLeafLine size={14} color="white" />}
               </div>
               <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>CoopLedger</span>
             </div>
           </div>
           <div className="faq-nav-desktop">
-            {['/cooperatives', '/about'].map((href, i) => (
-              <Link key={href} href={href} style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: 13, padding: '6px 10px', transition: 'color 0.15s' }}
-                onMouseEnter={e => (e.currentTarget.style.color = accent)}
-                onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
-              >
-                {i === 0 ? 'Coopératives' : 'À propos'}
-              </Link>
-            ))}
-            <button onClick={toggle} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 20, padding: '5px 12px', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 5, transition: 'border-color 0.15s, color 0.15s' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.color = accent; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-            >
-              <span style={{ display: 'inline-flex', transition: 'transform 0.4s', animation: 'spin-slow 8s linear infinite' }}>
-                {isDry ? <RiSunLine size={13} /> : <RiLeafLine size={13} />}
-              </span>
+            <Link href="/cooperatives" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: 13, padding: '6px 10px' }}>Coopératives</Link>
+            <Link href="/about" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: 13, padding: '6px 10px' }}>À propos</Link>
+            <button onClick={toggle} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 20, padding: '5px 12px', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 5 }}>
+              {isDry ? <RiSunLine size={13} /> : <RiLeafLine size={13} />}
               <span>{isDry ? 'Sec' : 'Pluies'}</span>
             </button>
-            <Link href="/login" className="btn btn-primary btn-sm" style={{ textDecoration: 'none', transition: 'transform 0.15s, box-shadow 0.15s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 14px ${accent}40`; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = 'none'; }}
-            >
-              Connexion
-            </Link>
+            <Link href="/login" className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>Connexion</Link>
           </div>
-          <button className="faq-hamburger" onClick={() => setMobileMenuOpen(true)} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '7px', cursor: 'pointer', color: 'var(--text-primary)', alignItems: 'center', justifyContent: 'center', transition: 'border-color 0.15s' }}>
+          <button className="faq-hamburger" onClick={() => setMobileMenuOpen(true)} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '7px', cursor: 'pointer', color: 'var(--text-primary)', alignItems: 'center', justifyContent: 'center' }}>
             <RiMenuLine size={20} />
           </button>
         </div>
@@ -645,60 +373,50 @@ export default function FaqPage() {
 
       <main className="faq-content-pad" style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
 
-        {/* ── Hero ── */}
-        <div
-          className="faq-hero-section"
-          ref={heroRef}
-          style={{ padding: '64px 0 40px', textAlign: 'center', borderBottom: '1px solid var(--border-subtle)' }}
-        >
-          <div className="hero-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 20, background: 'var(--accent-subtle)', border: `1px solid ${accent}30`, marginBottom: 22 }}>
-            <HelpCircle size={13} style={{ color: accent, animation: 'float 2.5s ease-in-out infinite' }} />
+        {/* Hero */}
+        <div className="faq-hero-section" style={{ padding: '64px 0 40px', textAlign: 'center', borderBottom: '1px solid var(--border-subtle)' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 20, background: 'var(--accent-subtle)', border: '1px solid var(--border)', marginBottom: 22 }}>
+            <HelpCircle size={13} style={{ color: accent }} />
             <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Foire aux questions</span>
           </div>
-
-          <h1 className={`faq-hero-title hero-title`} style={{ fontFamily: 'DM Serif Display, serif', lineHeight: 1.15, color: 'var(--text-primary)', marginBottom: 16 }}>
+          <h1 className="faq-hero-title" style={{ fontFamily: 'DM Serif Display, serif', lineHeight: 1.15, color: 'var(--text-primary)', marginBottom: 16 }}>
             Toutes vos questions,<br />
-            <span className="accent-shimmer">des réponses claires</span>
+            <span style={{ color: accent }}>des réponses claires</span>
           </h1>
-
-          <p className="hero-subtitle" style={{ fontSize: 15, color: 'var(--text-secondary)', maxWidth: 520, margin: '0 auto 32px', lineHeight: 1.7 }}>
+          <p style={{ fontSize: 15, color: 'var(--text-secondary)', maxWidth: 520, margin: '0 auto 32px', lineHeight: 1.7 }}>
             Retrouvez ici les réponses aux questions les plus fréquentes sur CoopLedger — de la connexion à la vérification blockchain, en passant par les cotisations Mobile Money.
           </p>
 
           {/* Search */}
-          <div className="hero-search search-box" style={{
-            maxWidth: 480, margin: '0 auto', position: 'relative',
-            borderRadius: 12, transition: 'box-shadow 0.25s',
-          }}>
-            <div style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 1 }}>
-              <RiSearchLine size={16} style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} />
+          <div style={{ maxWidth: 480, margin: '0 auto', position: 'relative' }}>
+            <div style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+              <RiSearchLine size={16} style={{ color: 'var(--text-muted)' }} />
             </div>
             <input
               className="input"
-              style={{ paddingLeft: 40, fontSize: 14, width: '100%', boxSizing: 'border-box', borderRadius: 12 }}
-              placeholder="Rechercher… (ex : biométrie, OTP, Polygon)"
+              style={{ paddingLeft: 40, fontSize: 14 }}
+              placeholder="Rechercher une question… (ex : biométrie, OTP, Polygon)"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
           </div>
         </div>
 
-        {/* ── Body ── */}
+        {/* Body */}
         <div style={{ padding: '48px 0 64px' }}>
           {search.trim().length >= 2 ? (
-            /* ── Search results ── */
-            <div style={{ animation: 'fadeSlideUp 0.35s ease both' }}>
+            /* Search results */
+            <div>
               <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>
-                {activeQuestions.length} résultat{activeQuestions.length !== 1 ? 's' : ''} pour{' '}
-                <strong style={{ color: accent }}>"{search}"</strong>
+                {activeQuestions.length} résultat{activeQuestions.length !== 1 ? 's' : ''} pour <strong style={{ color: 'var(--text-primary)' }}>"{search}"</strong>
               </p>
               {activeQuestions.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '48px 0' }}>
-                  <HelpCircle size={40} style={{ color: 'var(--text-muted)', marginBottom: 16, animation: 'float 2s ease-in-out infinite' }} />
+                  <HelpCircle size={40} style={{ color: 'var(--text-muted)', marginBottom: 16 }} />
                   <p style={{ fontSize: 15, color: 'var(--text-secondary)' }}>Aucun résultat trouvé. Essayez un autre terme.</p>
                 </div>
               ) : (
-                <div className="card faq-accordion-card">
+                <div className="card" style={{ padding: '0 24px' }}>
                   {activeQuestions.map((faq, i) => (
                     <AccordionItem
                       key={`search-${i}`}
@@ -707,7 +425,6 @@ export default function FaqPage() {
                       accent={accent}
                       isOpen={!!openItems[`search-${i}`]}
                       onToggle={() => toggleItem(`search-${i}`)}
-                      index={i}
                     />
                   ))}
                 </div>
@@ -715,69 +432,69 @@ export default function FaqPage() {
             </div>
           ) : (
             <div className="faq-layout">
-              {/* ── Sidebar desktop ── */}
+              {/* Sidebar desktop */}
               <aside className="faq-sidebar">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  {FAQ_CATEGORIES.map((cat, i) => (
-                    <div key={cat.id} style={{ animation: `fadeSlideUp 0.4s ease ${i * 40 + 100}ms both` }}>
-                      <CategoryButton
-                        cat={cat}
-                        isActive={activeCategory === cat.id}
-                        accent={accent}
-                        onClick={() => setActiveCategory(cat.id)}
-                      />
-                    </div>
+                  {FAQ_CATEGORIES.map(cat => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setActiveCategory(cat.id)}
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '10px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                        background: activeCategory === cat.id ? `${accent}12` : 'none',
+                        color: activeCategory === cat.id ? accent : 'var(--text-secondary)',
+                        fontFamily: 'Sora, sans-serif', fontSize: 13, fontWeight: activeCategory === cat.id ? 600 : 400,
+                        textAlign: 'left', transition: 'all 0.15s',
+                        borderLeft: `2px solid ${activeCategory === cat.id ? accent : 'transparent'}`,
+                      }}
+                    >
+                      <span>{cat.label}</span>
+                      <span style={{ fontSize: 11, background: activeCategory === cat.id ? `${accent}18` : 'var(--bg-card-hover)', color: activeCategory === cat.id ? accent : 'var(--text-muted)', borderRadius: 10, padding: '1px 7px', fontWeight: 600 }}>
+                        {cat.questions.length}
+                      </span>
+                    </button>
                   ))}
                 </div>
               </aside>
 
-              {/* ── Content ── */}
-              <div style={{ minWidth: 0 /* prevent grid blowout */ }}>
+              {/* Mobile category scroll */}
+              <div style={{ display: 'none' }} className="faq-cat-mobile-only">
+                {/* rendered via CSS on mobile by layout grid trick */}
+              </div>
+
+              {/* Content */}
+              <div>
                 {/* Mobile: category horizontal scroll */}
-                <div
-                  ref={catScrollRef}
-                  className="faq-cat-scroll"
-                  style={{ marginBottom: 24 }}
-                >
+                <div className="faq-cat-scroll" style={{ display: 'none', marginBottom: 24 }}>
                   {FAQ_CATEGORIES.map(cat => (
                     <button
                       key={cat.id}
-                      data-active={activeCategory === cat.id}
+                      className="faq-cat-btn"
                       onClick={() => setActiveCategory(cat.id)}
                       style={{
-                        flexShrink: 0,
-                        padding: '8px 14px',
-                        borderRadius: 20,
-                        border: `1px solid ${activeCategory === cat.id ? accent : 'var(--border)'}`,
+                        padding: '8px 14px', borderRadius: 20, border: `1px solid ${activeCategory === cat.id ? accent : 'var(--border)'}`,
                         background: activeCategory === cat.id ? `${accent}12` : 'var(--bg-card)',
                         color: activeCategory === cat.id ? accent : 'var(--text-secondary)',
-                        fontFamily: 'Sora, sans-serif',
-                        fontSize: 12,
-                        fontWeight: activeCategory === cat.id ? 600 : 400,
+                        fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: activeCategory === cat.id ? 600 : 400,
                         cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                        transition: 'all 0.2s',
                       }}
                     >
-                      {cat.label}{' '}
-                      <span style={{ opacity: 0.7 }}>({cat.questions.length})</span>
+                      {cat.label} <span style={{ marginLeft: 4, opacity: 0.7 }}>({cat.questions.length})</span>
                     </button>
                   ))}
                 </div>
 
-                {/* Section header */}
-                <div style={{ marginBottom: 20, animation: 'slideInRight 0.35s ease both' }} key={activeCategory}>
+                <div style={{ marginBottom: 20 }}>
                   <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, color: 'var(--text-primary)', marginBottom: 4 }}>
                     {FAQ_CATEGORIES.find(c => c.id === activeCategory)?.label}
                   </h2>
                   <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                    {FAQ_CATEGORIES.find(c => c.id === activeCategory)?.questions.length} question
-                    {(FAQ_CATEGORIES.find(c => c.id === activeCategory)?.questions.length ?? 0) > 1 ? 's' : ''}
+                    {FAQ_CATEGORIES.find(c => c.id === activeCategory)?.questions.length} question{(FAQ_CATEGORIES.find(c => c.id === activeCategory)?.questions.length ?? 0) > 1 ? 's' : ''}
                   </p>
                 </div>
 
-                {/* Accordion */}
-                <div className="card faq-accordion-card" key={activeCategory + '-card'} style={{ animation: 'fadeSlideUp 0.3s ease both' }}>
+                <div className="card" style={{ padding: '0 24px' }}>
                   {(FAQ_CATEGORIES.find(c => c.id === activeCategory)?.questions ?? []).map((faq, i) => (
                     <AccordionItem
                       key={`${activeCategory}-${i}`}
@@ -786,7 +503,6 @@ export default function FaqPage() {
                       accent={accent}
                       isOpen={!!openItems[`${activeCategory}-${i}`]}
                       onToggle={() => toggleItem(`${activeCategory}-${i}`)}
-                      index={i}
                     />
                   ))}
                 </div>
@@ -795,15 +511,20 @@ export default function FaqPage() {
           )}
         </div>
 
-        {/* ── Contact CTA ── */}
+        {/* Mobile category scroller (always show below hero on mobile) */}
+        <style>{`
+          @media (max-width: 820px) {
+            .faq-cat-scroll { display: flex !important; }
+          }
+          @media (max-width: 820px) {
+            .faq-layout { display: flex; flex-direction: column; }
+            .faq-sidebar { display: none; }
+          }
+        `}</style>
+
+        {/* Contact CTA */}
         <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: 48, paddingBottom: 64, textAlign: 'center' }}>
-          <div style={{
-            width: 52, height: 52, borderRadius: 16,
-            background: `${accent}18`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 16px',
-            animation: 'pulse-ring 2.5s ease-in-out infinite',
-          }}>
+          <div style={{ width: 52, height: 52, borderRadius: 16, background: `${accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <HelpCircle size={26} style={{ color: accent }} />
           </div>
           <h3 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, color: 'var(--text-primary)', marginBottom: 8 }}>
@@ -813,16 +534,10 @@ export default function FaqPage() {
             Notre équipe support est disponible du lundi au vendredi de 8h à 17h pour vous aider.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="mailto:support@coopledger.tg" className="btn btn-primary" style={{ textDecoration: 'none', transition: 'transform 0.15s, box-shadow 0.15s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = `0 6px 20px ${accent}40`; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = 'none'; }}
-            >
+            <a href="mailto:support@coopledger.tg" className="btn btn-primary" style={{ textDecoration: 'none' }}>
               support@coopledger.tg <ArrowRight size={14} />
             </a>
-            <Link href="/cooperatives/apply" className="btn btn-secondary" style={{ textDecoration: 'none', transition: 'transform 0.15s' }}
-              onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)')}
-              onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
-            >
+            <Link href="/cooperatives/apply" className="btn btn-secondary" style={{ textDecoration: 'none' }}>
               Inscrire ma coopérative
             </Link>
           </div>
@@ -830,10 +545,10 @@ export default function FaqPage() {
 
       </main>
 
-      {/* ── Footer ── */}
+      {/* Footer */}
       <footer style={{ borderTop: '1px solid var(--border)', background: 'var(--bg-secondary)', padding: '28px 24px', textAlign: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 10 }}>
-          <div style={{ width: 26, height: 26, borderRadius: 7, background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'float 3s ease-in-out infinite' }}>
+          <div style={{ width: 26, height: 26, borderRadius: 7, background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {isDry ? <RiSunLine size={13} color="white" /> : <RiLeafLine size={13} color="white" />}
           </div>
           <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: 14 }}>CoopLedger</span>
