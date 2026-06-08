@@ -225,7 +225,7 @@ export default function AboutPage() {
                   <RiShieldCheckLine size={18} style={{ color: accent }} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: accent, textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: 11 }}>On-chain · Polygon</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: accent, textTransform: 'uppercase', letterSpacing: '0.06em'}}>On-chain · Polygon</div>
                   <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>Ce qui ne change jamais</div>
                 </div>
               </div>
