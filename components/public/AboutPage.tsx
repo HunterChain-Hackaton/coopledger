@@ -294,7 +294,7 @@ export default function AboutPage() {
           </div>
 
           <div className="about-mockup-grid" style={{ display: 'grid', gap: 16, marginBottom: 16 }}>
-            {['image_maquette_1.jpeg', 'image_maquette_2.jpeg', 'image_maquette_3.jpeg'].map((img, i) => (
+            {(theme === "rain" ? ['image_maquette_1.jpeg', 'image_maquette_2.jpeg', 'image_maquette_3.jpeg'] : ['image_maquette_1.PNG', 'image_maquette_2.PNG', 'image_maquette_3.PNG']).map((img, i) => (
               <div key={img} className="glass-section" style={{ overflow: 'hidden', aspectRatio: '9/16', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, background: `linear-gradient(135deg, ${accent}08 0%, ${accent}03 100%)` }}>
                 <img src={`/${img}`} alt={`Maquette ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                   onError={(e) => {
@@ -317,7 +317,7 @@ export default function AboutPage() {
           </div>
 
           <div className="about-mockup-grid" style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(3, 1fr)' }}>
-            {['image_maquette_4.png', 'image_maquette_5.png', 'image_maquette_6.png'].map((img, i) => (
+            {(theme === "rain"? ['image_maquette_4.png', 'image_maquette_5.png', 'image_maquette_6.png'] : ['image_maquette_8.png', 'image_maquette_11.png', 'image_maquette_12.png']).map((img, i) => (
               <div key={img} className="glass-section" style={{ overflow: 'hidden', aspectRatio: '16/10', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, background: `linear-gradient(135deg, ${accent}06 0%, ${accent}02 100%)` }}>
                 <img src={`/${img}`} alt={`Maquette web ${i + 4}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                   onError={(e) => {
